@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Pinguim Aventura 3D — 7 Níveis</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-row">
+      <div class="hud-item">
+        <span class="hud-label">Nível</span>
+        <span id="hud-level">1</span><span>/7</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Vidas</span>
+        <span id="hud-lives">♥♥♥</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Peixes</span>
+        <span id="hud-fish">0</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Tempo</span>
+        <span id="hud-time">0.0s</span>
+      </div>
+    </div>
+    <div id="hud-hint" class="hud-hint">WASD para mover · ESPAÇO para pular · SHIFT para correr · ESC para menu</div>
+  </div>
+
+  <!-- Main Menu -->
+  <div id="menu" class="overlay">
+    <div class="panel">
+      <h1 class="title">Pinguim Aventura 3D</h1>
+      <p class="subtitle">Ajude o Pinguim a atravessar 7 mundos congelantes cheios de inimigos e obstáculos!</p>
+      <div class="btn-row">
+        <button id="btn-play" class="btn primary">Jogar</button>
+        <button id="btn-levels" class="btn">Selecionar Nível</button>
+        <button id="btn-options" class="btn">Opções</button>
+        <button id="btn-credits" class="btn">Créditos</button>
+      </div>
+      <div class="hint">Dica: use fones para a melhor experiência sonora 🎧</div>
+    </div>
+  </div>
+
+  <!-- Level Select -->
+  <div id="level-select" class="overlay hidden">
+    <div class="panel">
+      <h2>Selecione o Nível</h2>
+      <div id="level-grid" class="level-grid"></div>
+      <button class="btn" data-back="menu">Voltar</button>
+    </div>
+  </div>
+
+  <!-- Options -->
+  <div id="options" class="overlay hidden">
+    <div class="panel">
+      <h2>Opções</h2>
+      <label class="slider-row">
+        Música <input type="range" id="vol-music" min="0" max="1" step="0.01" value="0.4" />
+      </label>
+      <label class="slider-row">
+        Efeitos <input type="range" id="vol-sfx" min="0" max="1" step="0.01" value="0.6" />
+      </label>
+      <label class="slider-row">
+        Qualidade
+        <select id="quality">
+          <option value="low">Baixa</option>
+          <option value="medium" selected>Média</option>
+          <option value="high">Alta</option>
+        </select>
+      </label>
+      <button class="btn" data-back="menu">Voltar</button>
+    </div>
+  </div>
+
+  <!-- Credits -->
+  <div id="credits" class="overlay hidden">
+    <div class="panel">
+      <h2>Créditos</h2>
+      <p>Feito com <b>Three.js</b>.</p>
+      <p>Áudio gerado proceduralmente com a Web Audio API.</p>
+      <p>Criado para Rafael 🐧</p>
+      <button class="btn" data-back="menu">Voltar</button>
+    </div>
+  </div>
+
+  <!-- Pause -->
+  <div id="pause" class="overlay hidden">
+    <div class="panel">
+      <h2>Pausado</h2>
+      <div class="btn-row">
+        <button id="btn-resume" class="btn primary">Retomar</button>
+        <button id="btn-restart" class="btn">Reiniciar Nível</button>
+        <button id="btn-quit" class="btn">Voltar ao Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level intro -->
+  <div id="level-intro" class="overlay hidden">
+    <div class="panel">
+      <h2 id="level-intro-title">Nível 1</h2>
+      <p id="level-intro-subtitle">Planícies Nevadas</p>
+      <p id="level-intro-desc">Chegue até a bandeira amarela. Desvie dos obstáculos.</p>
+      <button id="btn-start-level" class="btn primary">Iniciar</button>
+    </div>
+  </div>
+
+  <!-- Level complete -->
+  <div id="level-complete" class="overlay hidden">
+    <div class="panel">
+      <h2>Nível Concluído! 🎉</h2>
+      <p id="level-complete-stats"></p>
+      <div class="btn-row">
+        <button id="btn-next-level" class="btn primary">Próximo Nível</button>
+        <button id="btn-replay" class="btn">Jogar de Novo</button>
+        <button id="btn-complete-menu" class="btn">Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game over -->
+  <div id="game-over" class="overlay hidden">
+    <div class="panel">
+      <h2>Fim de Jogo</h2>
+      <p>Você perdeu todas as vidas. Tente novamente!</p>
+      <div class="btn-row">
+        <button id="btn-retry" class="btn primary">Tentar de Novo</button>
+        <button id="btn-gameover-menu" class="btn">Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Victory -->
+  <div id="victory" class="overlay hidden">
+    <div class="panel">
+      <h1 class="title">🏆 Vitória!</h1>
+      <p>Você terminou todos os 7 níveis! Parabéns ao grande explorador polar!</p>
+      <button id="btn-victory-menu" class="btn primary">Voltar ao Menu</button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading" class="overlay">
+    <div class="panel">
+      <h2>Carregando...</h2>
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
