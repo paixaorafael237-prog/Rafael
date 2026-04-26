@@ -35,8 +35,8 @@ export class Input {
     let x = 0, z = 0;
     if (this.isDown('KeyA') || this.isDown('ArrowLeft')) x -= 1;
     if (this.isDown('KeyD') || this.isDown('ArrowRight')) x += 1;
-    if (this.isDown('KeyW') || this.isDown('ArrowUp')) z -= 1;
-    if (this.isDown('KeyS') || this.isDown('ArrowDown')) z += 1;
+    if (this.isDown('KeyW') || this.isDown('ArrowUp')) z += 1;
+    if (this.isDown('KeyS') || this.isDown('ArrowDown')) z -= 1;
     return { x, z };
   }
 
