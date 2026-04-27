@@ -252,6 +252,89 @@ p {
   to { transform: rotate(360deg); }
 }
 
+/* Touch controls (mobile/tablet) */
+#touch-controls {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.touch-dpad {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  width: 180px;
+  height: 180px;
+  pointer-events: none;
+}
+
+.touch-actions {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.touch-btn {
+  pointer-events: auto;
+  background: rgba(20, 30, 60, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  backdrop-filter: blur(4px);
+  transition: transform 0.05s, background 0.1s;
+}
+
+.touch-btn.active,
+.touch-btn:active {
+  background: rgba(58, 134, 255, 0.7);
+  transform: scale(0.92);
+}
+
+.touch-dpad .touch-btn {
+  position: absolute;
+}
+.dpad-up    { left: 58px; top: 0; }
+.dpad-down  { left: 58px; bottom: 0; top: auto; }
+.dpad-left  { left: 0;    top: 58px; }
+.dpad-right { right: 0;   left: auto; top: 58px; }
+
+.touch-jump { width: 84px; height: 84px; font-size: 2rem; background: rgba(58, 134, 255, 0.6); }
+.touch-run  { width: 64px; height: 64px; }
+.touch-pause {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 44px;
+  height: 44px;
+  font-size: 1.1rem;
+}
+
+/* Show touch controls on coarse pointers (phones/tablets) only */
+@media (pointer: coarse) {
+  #touch-controls:not(.hidden) { display: block; }
+}
+@media (pointer: fine) {
+  #touch-controls { display: none !important; }
+}
+
 /* Damage flash */
 #game.hit {
   animation: hitFlash 0.25s ease;

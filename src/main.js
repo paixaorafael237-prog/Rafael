@@ -2,6 +2,7 @@ import { Game } from './game.js';
 import { AudioManager } from './audio.js';
 import { UI } from './ui.js';
 import { Input } from './input.js';
+import { setupTouchControls } from './touch.js';
 
 const canvas = document.getElementById('game');
 const audio = new AudioManager();
@@ -41,6 +42,8 @@ const ui = new UI({
 });
 
 game = new Game({ canvas, audio, ui, input });
+
+setupTouchControls();
 
 // Allow clicking the background to toggle fullscreen on desktop.
 canvas.addEventListener('dblclick', () => {

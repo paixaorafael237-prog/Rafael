@@ -126,8 +126,14 @@ export class UI {
     this._show('level-complete');
   }
 
-  showHUD() { this.el('hud').classList.remove('hidden'); }
-  hideHUD() { this.el('hud').classList.add('hidden'); }
+  showHUD() {
+    this.el('hud').classList.remove('hidden');
+    this.el('touch-controls')?.classList.remove('hidden');
+  }
+  hideHUD() {
+    this.el('hud').classList.add('hidden');
+    this.el('touch-controls')?.classList.add('hidden');
+  }
 
   updateHUD({ level, lives, fish, time }) {
     this.el('hud-level').textContent = String(level);
