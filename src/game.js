@@ -204,11 +204,20 @@ export class Game {
     this.penguin.update(dt, this.input, this.level, this.audio);
     this.level.colliders = staticColliders;
 
-    // Fishes
+    // Fishes — use horizontal distance plus a vertical band that spans the
+    // penguin's body, so the player can collect fish by walking past them
+    // (not only by jumping into them).
+    const ph = this.penguin.height;
+    const pp = this.penguin.position;
     for (const f of this.level.fishes) {
       if (f.collected) continue;
       f.update(dt);
-      if (f.mesh.position.distanceTo(this.penguin.position) < (f.radius + this.penguin.radius)) {
+      const fp = f.mesh.position;
+      const dx = fp.x - pp.x;
+      const dz = fp.z - pp.z;
+      const horiz = Math.hypot(dx, dz);
+      const inBand = fp.y >= pp.y - 0.5 && fp.y <= pp.y + ph + 0.4;
+      if (inBand && horiz < (f.radius + this.penguin.radius + 0.25)) {
         f.collected = true;
         f.mesh.visible = false;
         this.fishCollected++;
@@ -255,13 +264,16 @@ export class Game {
       }
     }
 
-    // Goal
+    // Goal — horizontal distance only so jumping or falling does not affect it.
     if (this.level.goal) {
-      const d = this.level.goal.mesh.position.distanceTo(this.penguin.position);
+      const gp = this.level.goal.mesh.position;
+      const ddx = gp.x - this.penguin.position.x;
+      const ddz = gp.z - this.penguin.position.z;
+      const dHoriz = Math.hypot(ddx, ddz);
       if (this.level.isBoss) {
         const king = this.level.enemies.find(e => e.constructor && e.constructor.name === 'PolarKing');
-        if (king && !king.alive && d < 2.5) this._completeLevel();
-      } else if (d < 1.8) {
+        if (king && !king.alive && dHoriz < 2.5) this._completeLevel();
+      } else if (dHoriz < 1.8) {
         this._completeLevel();
       }
     }
